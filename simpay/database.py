@@ -28,7 +28,7 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "data", "simpay.db")
 BANK_KEYS_PATH = os.path.join(os.path.dirname(__file__), "data", "bank_keys.json")
 
 # Starting balance given to every new user (in INR)
-INITIAL_BALANCE = 10000.0
+INITIAL_BALANCE = 100000.0
 
 
 def get_connection() -> sqlite3.Connection:
@@ -228,6 +228,29 @@ def get_all_users() -> list:
     rows = cursor.fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+def verify_user_pin(upi_id: str, pin: str) -> bool:
+    """
+    Verify a user's transaction PIN.
+
+    Args:
+        upi_id (str): The user's UPI ID.
+        pin (str): The plaintext PIN to verify.
+
+    Returns:
+        bool: True if PIN matches, False otherwise.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT pin_hash FROM users WHERE upi_id = ?", (upi_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return False
+
+    return hash_pin(pin) == row["pin_hash"]
 
 
 # =============================================================================

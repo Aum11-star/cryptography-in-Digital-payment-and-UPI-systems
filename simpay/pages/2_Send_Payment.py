@@ -24,11 +24,54 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from database import initialize_database, get_or_create_bank_keys, get_user_by_upi
 from crypto_utils import encrypt_transaction_payload, hash_pin
 from bank_server import process_payment
+from ui_effects import inject_global_effects
 
 initialize_database()
 
 st.set_page_config(page_title="Send Payment — SimPay", page_icon="💸", layout="wide")
-st.title("💸 Send Payment")
+inject_global_effects()
+st.markdown(
+    """
+<style>
+    .pay-hero {
+        background: linear-gradient(135deg, rgba(85, 124, 255, 0.2) 0%, rgba(57, 162, 255, 0.2) 100%);
+        border: 1px solid var(--simpay-border);
+        border-radius: 18px;
+        padding: 1.2rem 1.4rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 12px 28px rgba(51, 93, 201, 0.16);
+        animation: simpay-pop 0.55s ease;
+    }
+    .pay-graphic {
+        display: inline-block;
+        font-size: 1.4rem;
+        margin-left: 0.45rem;
+        animation: simpay-float 2.3s ease-in-out infinite;
+    }
+    [data-testid="stForm"] {
+        background: var(--simpay-card);
+        border: 1px solid var(--simpay-border);
+        border-radius: 16px;
+        padding: 1rem;
+    }
+</style>
+""",
+    unsafe_allow_html=True,
+)
+st.markdown("<h1 class='simpay-title'>💸 Send Payment</h1>", unsafe_allow_html=True)
+st.markdown(
+    """
+<div class="pay-hero">
+    <h3 style="margin:0;color:var(--simpay-text);">Encrypted transfer portal
+        <span class="pay-graphic">💳</span><span class="pay-graphic">🔐</span><span class="pay-graphic">✨</span>
+    </h3>
+    <p style="margin:0.5rem 0 0;color:var(--simpay-text);">
+        Smart visual flow + hybrid cryptography with real-time security stages.
+    </p>
+</div>
+""",
+    unsafe_allow_html=True,
+)
 
 # ── Auth guard ────────────────────────────────────────────────────────────────
 if "user" not in st.session_state or not st.session_state.user:

@@ -20,11 +20,45 @@ from datetime import datetime
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from database import initialize_database, get_all_transactions, get_all_users
+from ui_effects import inject_global_effects
 
 initialize_database()
 
 st.set_page_config(page_title="Admin Dashboard — SimPay", page_icon="📊", layout="wide")
-st.title("📊 Admin Analytics Dashboard")
+inject_global_effects()
+st.markdown(
+    """
+<style>
+    .admin-hero {
+        background: linear-gradient(130deg, rgba(94, 116, 255, 0.2), rgba(56, 170, 255, 0.2));
+        border: 1px solid var(--simpay-border);
+        border-radius: 18px;
+        padding: 1.1rem 1.3rem;
+        margin: 0.4rem 0 1rem;
+        box-shadow: 0 14px 30px rgba(58, 90, 190, 0.15);
+    }
+    .admin-badge {
+        display: inline-block;
+        margin-right: 0.5rem;
+        animation: simpay-float 2.6s ease-in-out infinite;
+    }
+    [data-testid="metric-container"] {
+        background: var(--simpay-card);
+        border: 1px solid var(--simpay-border);
+        border-radius: 13px;
+        box-shadow: 0 10px 20px rgba(66, 95, 184, 0.13);
+    }
+    [data-testid="stDataFrame"], .stPlotlyChart, .stPyplot {
+        background: var(--simpay-card);
+        border: 1px solid var(--simpay-border);
+        border-radius: 12px;
+        padding: 0.4rem;
+    }
+</style>
+""",
+    unsafe_allow_html=True,
+)
+st.markdown("<h1 class='simpay-title'>📊 Admin Analytics Dashboard</h1>", unsafe_allow_html=True)
 st.caption("Network-level view of all transactions, anomaly detection, and user statistics.")
 
 # ── Admin authentication (simple hardcoded demo credentials) ─────────────────
@@ -36,6 +70,22 @@ if "admin_logged_in" not in st.session_state:
 
 if not st.session_state.admin_logged_in:
     st.warning("This page requires Admin credentials.")
+    st.markdown(
+        """
+<div class="admin-hero simpay-pop">
+  <h4 style="margin:0;color:var(--simpay-text);">
+    <span class="admin-badge">🛡️</span>
+    <span class="admin-badge">📈</span>
+    <span class="admin-badge">⚙️</span>
+    Secure Operations Console
+  </h4>
+  <p style="margin:0.45rem 0 0;color:var(--simpay-text);">
+    Monitor ledger health, anomalies, and user activity with animated analytics cards.
+  </p>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
     with st.form("admin_login"):
         adm_user = st.text_input("Admin Username")
         adm_pass = st.text_input("Admin Password", type="password")
@@ -74,6 +124,19 @@ ANOMALY_THRESHOLD = 5000.0
 df["is_anomalous"] = df["amount"] >= ANOMALY_THRESHOLD
 
 # ── Summary Metrics Row ───────────────────────────────────────────────────────
+st.markdown(
+    """
+<div class="admin-hero simpay-pop">
+  <h4 style="margin:0;color:var(--simpay-text);">
+    <span class="admin-badge">📊</span>
+    <span class="admin-badge">🔎</span>
+    <span class="admin-badge">🚨</span>
+    Live network observability dashboard
+  </h4>
+</div>
+""",
+    unsafe_allow_html=True,
+)
 st.divider()
 st.subheader("Network Summary")
 

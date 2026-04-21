@@ -13,6 +13,7 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from database import initialize_database, get_or_create_bank_keys
+from ui_effects import inject_global_effects
 
 # ── Page config (must be first Streamlit call) ──────────────────────────────
 st.set_page_config(
@@ -25,9 +26,10 @@ st.set_page_config(
 # ── Initialize DB and bank keys on first run ─────────────────────────────────
 initialize_database()
 bank_keys = get_or_create_bank_keys()
+inject_global_effects()
 
 # ── Home page content ────────────────────────────────────────────────────────
-st.title("🔐 SimPay — Secure Digital Payment Network Simulator")
+st.markdown("<h1 class='simpay-title'>🔐 SimPay — Secure Digital Payment Network Simulator</h1>", unsafe_allow_html=True)
 st.caption("An academic demonstration of Hybrid Cryptography in a UPI-style payment network")
 
 st.divider()
